@@ -1,12 +1,6 @@
-use std::fs;
-
-pub fn solution() {
-    let data: String = fs::read_to_string("./src/data/data1")
-        .unwrap()
-        .parse()
-        .unwrap();
-
+pub fn solution(data: String) {
     let mut num: usize = 0;
+
     for line in data.lines() {
         let char_list: Vec<char> = line.chars().filter(|x| x.is_numeric()).collect();
         let first_digit_string: String = char_list.first().unwrap().to_string();
