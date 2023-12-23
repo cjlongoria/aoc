@@ -42,6 +42,16 @@ pub fn part2(data: String) {
 }
 
 fn scan_neighbors(matrix: &[&str], row: usize, column: usize) -> HashSet<usize> {
+    // Using a HashSet here was a lucky assumption that might not work for everyone
+    // The idea was that I didn't want to duplicate the same number multiple times
+    // in my results. For example;
+    // ..234..
+    // ...*...
+    // ..234..
+    // This would only return a HashSet with a single value (234)
+    //
+    // If you wanted to get around this you could use a Vec and have some
+    // sort of flag to toggle every time you came across a '.' to signify a new int
     let mut numbers: HashSet<usize> = HashSet::new();
     for i in row - 1..=row + 1 {
         for j in column - 1..=column + 1 {
