@@ -62,11 +62,9 @@ pub fn part1(data: &str) {
     let ans = seed_num
         .iter()
         .map(|x| {
-            let mut result = *x;
-            for rm in vec![&s2s, &s2f, &f2w, &w2l, &l2t, &t2h, &h2l].iter() {
-                result = get_from_rangemap(rm, result);
-            }
-            result
+            vec![&s2s, &s2f, &f2w, &w2l, &l2t, &t2h, &h2l]
+                .iter()
+                .fold(x.clone(), |acc, rm| get_from_rangemap(*rm, acc))
         })
         .min()
         .unwrap();
