@@ -1,3 +1,6 @@
+use std::ops::Range;
+
+use itertools::Itertools;
 use rangemap::RangeMap;
 
 pub fn part1(data: &str) {
@@ -17,7 +20,7 @@ pub fn part1(data: &str) {
     let mut data_iter = data.lines();
 
     //Get seeds and skip the empty line
-    let seed_num: Vec<i64> = data_iter
+    let seed_num: Vec<Range<i64>> = data_iter
         .next()
         .unwrap()
         .split_once(':')
@@ -25,6 +28,8 @@ pub fn part1(data: &str) {
         .1
         .split_whitespace()
         .map(|x| x.parse::<i64>().unwrap())
+        .tuples()
+        .map(|(x, y)| x..x + y)
         .collect();
 
     let mut data_lines: Vec<&str> = Vec::new();
@@ -61,15 +66,20 @@ pub fn part1(data: &str) {
 
     let ans = seed_num
         .iter()
-        .map(|x| {
-            vec![&s2s, &s2f, &f2w, &w2l, &l2t, &t2h, &h2l]
-                .iter()
-                .fold(x.clone(), |acc, rm| get_from_rangemap(*rm, acc))
+        .map(|seed_range| {
+            let mut min_val: i64 = i64::MAX;
+            for x in seed_range.clone() {
+                let value = vec![&s2s, &s2f, &f2w, &w2l, &l2t, &t2h, &h2l]
+                    .iter()
+                    .fold(x.clone(), |acc, rm| get_from_rangemap(*rm, acc));
+                min_val = min_val.min(value);
+            }
+            min_val
         })
         .min()
         .unwrap();
 
-    println!("Day5 part 1 answer - {}", ans);
+    println!("Day5 part 2 answer - {}", ans);
 }
 
 fn get_from_rangemap(rm: &RangeMap<i64, i64>, input: i64) -> i64 {
