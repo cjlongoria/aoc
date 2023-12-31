@@ -59,16 +59,19 @@ pub fn part1(data: &str) {
         current_map.insert(range, starting_point - end_point);
     }
 
-    let mut stack = Vec::new();
-    for seed in seed_num.iter() {
-        let mut input = seed.clone();
-        for rm in vec![&s2s, &s2f, &f2w, &w2l, &l2t, &t2h, &h2l].iter() {
-            let result = get_from_rangemap(rm, input);
-            input = result;
-        }
-        stack.push(input);
-    }
-    println!("Day5 part 1 answer - {}", stack.iter().min().unwrap())
+    let ans = seed_num
+        .iter()
+        .map(|x| {
+            let mut result = *x;
+            for rm in vec![&s2s, &s2f, &f2w, &w2l, &l2t, &t2h, &h2l].iter() {
+                result = get_from_rangemap(rm, result);
+            }
+            result
+        })
+        .min()
+        .unwrap();
+
+    println!("Day5 part 1 answer - {}", ans);
 }
 
 fn get_from_rangemap(rm: &RangeMap<i64, i64>, input: i64) -> i64 {
