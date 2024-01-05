@@ -163,16 +163,16 @@ impl<T> MapOfMaps<T> {
 }
 
 fn get_ranges_from_rangemap(rm: &RangeMap<i64, i64>, input: &[Range<i64>]) -> Vec<Range<i64>> {
-    let ranges: Vec<(&Range<i64>, &i64)> = input.iter().flat_map(|x| rm.overlapping(x)).collect();
-
-    ranges
+    input
         .iter()
+        .flat_map(|x| rm.overlapping(x))
         .map(|(x, y)| x.start - *y..x.end - *y)
         .collect()
 }
 
 fn get_int_from_rangemap(rm: &RangeMap<i64, i64>, input: i64) -> i64 {
     let num = rm.get(&input);
+
     if let Some(offset) = num {
         input - offset
     } else {
