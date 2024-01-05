@@ -6,4 +6,5 @@ fn main() {
     let data: String = fs::read_to_string("./data/data1").unwrap();
 
     solution::part1(&data);
+    solution::part2(&data);
 }

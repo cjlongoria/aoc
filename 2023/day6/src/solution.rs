@@ -24,6 +24,38 @@ pub fn part1(data: &str) {
     dbg!(ans);
 }
 
+pub fn part2(data: &str) {
+    let mut data_iter = data.lines();
+
+    let times = data_iter
+        .next()
+        .unwrap()
+        .strip_prefix("Time:")
+        .unwrap()
+        .trim()
+        .split_whitespace()
+        .collect::<Vec<&str>>()
+        .concat()
+        .parse::<i64>()
+        .unwrap();
+
+    let distances = data_iter
+        .next()
+        .unwrap()
+        .strip_prefix("Distance:")
+        .unwrap()
+        .trim()
+        .split_whitespace()
+        .collect::<Vec<&str>>()
+        .concat()
+        .parse::<i64>()
+        .unwrap();
+
+    let datapoints = [(times, distances)].into_iter();
+    let ans = calculate(datapoints);
+    dbg!(ans);
+}
+
 fn calculate(datapoints: impl Iterator<Item = (i64, i64)>) -> i64 {
     let mut start = 0;
     let mut end = 0;
