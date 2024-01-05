@@ -8,6 +8,7 @@ fn main() {
     // what_is_a_rangemap();
 
     solution::part1(&data);
+    solution::part2(&data);
 }
 
 fn _what_is_a_rangemap() {
