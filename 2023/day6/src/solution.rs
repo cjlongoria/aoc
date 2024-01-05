@@ -21,7 +21,7 @@ pub fn part1(data: &str) {
 
     let datapoints = times.zip(distances);
     let ans = calculate(datapoints);
-    dbg!(ans);
+    println!("Day 6 part 1 answer - {}", ans);
 }
 
 pub fn part2(data: &str) {
@@ -53,7 +53,7 @@ pub fn part2(data: &str) {
 
     let datapoints = [(times, distances)].into_iter();
     let ans = calculate(datapoints);
-    dbg!(ans);
+    println!("Day 6 part 2 answer - {}", ans);
 }
 
 fn calculate(datapoints: impl Iterator<Item = (i64, i64)>) -> i64 {
