@@ -68,21 +68,16 @@ impl<'a> Hand<'a> {
             hm.into_values().collect()
         };
 
-        let mut hand_type: u8 = if counts.contains(&5) {
-            6
-        } else if counts.contains(&4) {
-            5
-        } else if counts.contains(&3) && counts.contains(&2) {
-            4
-        } else if counts.contains(&3) {
-            3
-        } else if counts.iter().filter(|x| **x == 2usize).count() >= 2 {
-            2
-        } else if counts.contains(&2) {
-            1
-        } else {
-            0
+        let mut hand_type: u8 = match counts {
+            x if x.contains(&5) => 6,
+            x if x.contains(&4) => 5,
+            x if x.contains(&3) && x.contains(&2) => 4,
+            x if x.contains(&3) => 3,
+            x if x.iter().filter(|x| **x == 2usize).count() >= 2 => 2,
+            x if x.contains(&2) => 1,
+            _ => 0,
         };
+
         if joker {
             hand_type = match (hand_type, joker_count) {
                 (_, 0) => hand_type,
