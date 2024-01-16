@@ -1,3 +1,4 @@
+mod lcm;
 mod solution;
 
 use std::fs;
@@ -5,5 +6,5 @@ use std::fs;
 fn main() {
     let data: String = fs::read_to_string("./data/data").unwrap();
 
-    solution::part1(&data);
+    solution::solve(&data);
 }
