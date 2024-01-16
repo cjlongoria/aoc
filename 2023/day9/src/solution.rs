@@ -1,4 +1,4 @@
-pub fn solve(data: &str) {
+pub fn solve(data: &str, part2: bool) {
     let ans: i64 = data
         .lines()
         .map(|line| {
@@ -7,14 +7,18 @@ pub fn solve(data: &str) {
                 .map(|x| x.parse::<i64>().unwrap())
                 .collect();
 
-            calc(&measurements)
+            calc(&measurements, part2)
         })
         .sum();
 
-    println!("day 9 part 1 - {}", ans);
+    if part2 {
+        println!("day 9 part 2 - {}", ans);
+    } else {
+        println!("day 9 part 1 - {}", ans);
+    }
 }
 
-fn calc(measurements: &[i64]) -> i64 {
+fn calc(measurements: &[i64], part2: bool) -> i64 {
     if measurements.iter().all(|&x| x == 0) {
         0i64
     } else {
@@ -28,8 +32,11 @@ fn calc(measurements: &[i64]) -> i64 {
             .skip(1)
             .collect();
 
-        let ans = measurements.last().unwrap() + calc(&differences);
-        ans
+        if part2 {
+            measurements.first().unwrap() - calc(&differences, part2)
+        } else {
+            measurements.last().unwrap() + calc(&differences, part2)
+        }
     }
 }
 
