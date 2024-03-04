@@ -1,40 +1,7 @@
-#[derive(Debug)]
-struct Point((i32, i32));
+#[derive(Debug, Clone)]
+struct Point((usize, usize));
 
-struct Coords {
-    current: Point,
-    tile: Tile,
-}
-impl Coords {
-    fn new(point: Point, point_value: char) -> Self {
-        Self {
-            current: point,
-            tile: Tile::new(point_value),
-        }
-    }
-
-    fn connections(&self) -> Option<(Point, Point)> {
-        match self.tile {
-            Tile::UpDown => None,
-            Tile::LeftRight => None,
-            Tile::UpRight => None,
-            Tile::UpLeft => None,
-            Tile::RightDown => None,
-            Tile::LeftDown => None,
-            Tile::Start => None,
-            Tile::Ground => None,
-        }
-    }
-
-    fn tile_type(&self) -> &Tile {
-        &self.tile
-    }
-
-    fn pos(&self) -> &Point {
-        &self.current
-    }
-}
-
+#[derive(PartialEq, Debug)]
 enum Tile {
     UpDown,
     LeftRight,
@@ -54,23 +21,55 @@ impl Tile {
             'J' => Tile::UpLeft,
             '7' => Tile::RightDown,
             'F' => Tile::LeftDown,
-            '.' => Tile::Start,
-            'S' => Tile::Ground,
+            '.' => Tile::Ground,
+            'S' => Tile::Start,
             _ => panic!(),
         }
     }
 }
-pub fn solve(data: &str) -> () {
-    for (line_num, line) in data.lines().enumerate() {
-        for (pos, ch) in line.chars().enumerate() {
-            let point = Point((line_num.try_into().unwrap(), pos.try_into().unwrap()));
-            let coords = Coords::new(point, ch);
-            let connections = coords.connections();
-            println!("Map position is: {:?}", coords.pos());
-            if let Some(connections) = connections {
-                println!("connection points: {:?}", &connections);
-            }
-        }
+
+struct Graph {
+    data: Vec<Vec<char>>,
+    start: Point,
+}
+
+impl Graph {
+    fn new(raw_data: &str) -> Self {
+        let data: Vec<Vec<char>> = raw_data
+            .lines()
+            .map(|line| line.chars().collect())
+            .collect();
+
+        let start = data
+            .iter()
+            .enumerate()
+            .find_map(|(col_idx, column)| {
+                column
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, &val)| Tile::new(val) == Tile::Start)
+                    .map(|(row_idx, _)| Point((col_idx, row_idx)))
+                    .next()
+            })
+            .unwrap();
+
+        Self { data, start }
     }
+
+    fn get_value(&self, point: Point) -> Tile {
+        let (row, column) = point.0;
+        let value = self.data[row][column];
+        Tile::new(value)
+    }
+
+    fn get_start(&self) -> &Point {
+        &self.start
+    }
+}
+
+pub fn solve(data: &str) -> () {
+    let graph = Graph::new(data);
+    dbg!(&graph.get_start());
+    dbg!(graph.get_value(graph.get_start().clone()));
 }
 
