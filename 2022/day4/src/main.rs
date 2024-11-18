@@ -34,11 +34,7 @@ mod solution {
 
     pub fn part1(data: &str) {
         let mut counter = 0;
-        let range_tuples: Vec<(RangeInclusive<usize>, RangeInclusive<usize>)> = data
-            .lines()
-            .map(|line| line.split_once(",").unwrap())
-            .map(convert_tuple_to_range)
-            .collect();
+        let range_tuples = range_tuples(data);
 
         for tuple in range_tuples {
             if tuple.0.contains(tuple.1.start()) && tuple.0.contains(tuple.1.end()) {
@@ -47,9 +43,28 @@ mod solution {
                 counter += 1;
             }
         }
-        println!("{counter}");
+        println!("Part 1 answer = {counter}");
     }
-    pub fn part2(data: &str) {}
+    pub fn part2(data: &str) {
+        let mut counter = 0;
+        let range_tuples = range_tuples(data);
+
+        for tuple in range_tuples {
+            if tuple.0.contains(tuple.1.start()) {
+                counter += 1;
+            } else if tuple.1.contains(tuple.0.start()) {
+                counter += 1;
+            }
+        }
+        println!("Part 2 answer = {counter}");
+    }
+
+    fn range_tuples(data: &str) -> Vec<(RangeInclusive<usize>, RangeInclusive<usize>)> {
+        data.lines()
+            .map(|line| line.split_once(",").unwrap())
+            .map(convert_tuple_to_range)
+            .collect()
+    }
 
     fn convert_tuple_to_range(
         data: (&str, &str),
