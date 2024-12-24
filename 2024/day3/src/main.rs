@@ -45,7 +45,6 @@ pub mod part1 {
                 temp
             })
             .collect();
-        println!("{:?}", caps);
 
         caps.iter().fold(0, |acc, x| {
             let (left, right) = x.split_once(",").unwrap();
