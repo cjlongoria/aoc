@@ -33,77 +33,60 @@ fn main() {
 }
 
 pub mod part1 {
-    use crate::common::check;
-    use regex::Regex;
+    use crate::common::basic_regex;
 
     pub fn part1(data: &str) -> usize {
-        let re = Regex::new(r"mul\(([0-9]{1,3},[0-9]{1,3})\)").unwrap();
-        let caps: Vec<&str> = re
+        basic_regex(data)
+    }
+}
+
+pub mod common {
+    use regex::Regex;
+    pub fn basic_regex(data: &str) -> usize {
+        Regex::new(r"mul\(([0-9]{1,3},[0-9]{1,3})\)")
+            .unwrap()
             .captures_iter(data)
             .map(|c| {
                 let (_, [temp]) = c.extract();
                 temp
             })
-            .collect();
-
-        caps.iter().fold(0, |acc, x| {
-            let (left, right) = x.split_once(",").unwrap();
-            acc + (left.parse::<usize>().unwrap() * right.parse::<usize>().unwrap())
-        })
-    }
-}
-
-pub mod common {
-    pub fn check(data: &[u32]) -> bool {
-        if !data.is_sorted() && !data.iter().rev().is_sorted() {
-            return false;
-        }
-
-        let mut prev: Option<&u32> = None;
-        for level in data {
-            if let Some(prev_level) = prev {
-                if !(1..=3).contains(&prev_level.abs_diff(*level)) {
-                    return false;
-                }
-            }
-            prev = Some(level)
-        }
-        true
+            .fold(0, |acc, x| {
+                let (left, right) = x.split_once(",").unwrap();
+                acc + (left.parse::<usize>().unwrap() * right.parse::<usize>().unwrap())
+            })
     }
 }
 
 pub mod part2 {
-    use crate::common::check;
-
-    // This is a pretty lame brute force approach that short circuits on the first success.
-    fn problem_dampener(data: &[u32]) -> bool {
-        let end = data.len();
-
-        for i in 0..end {
-            let left = &data[..i];
-            let right = &data[i + 1..];
-            let new = [left, right].concat();
-            if check(&new) {
-                return true;
-            }
-        }
-        false
-    }
+    use crate::common::basic_regex;
+    use regex::Regex;
 
     pub fn part2(data: &str) -> usize {
-        let mut count = 0;
-        for report in data.lines() {
-            let report_data: Vec<_> = report
-                .split_whitespace()
-                .map(|x| x.parse::<u32>().unwrap())
-                .collect();
+        // multiple do() or don't() can happen in a row
+        // start with implicit do()
+        // doesn't have to end with don't()
+        //
+        // 1) split off until don't() - count beginning muls
+        // 2) split off last do() - count end muls
+        // 3) regex match lines between do() - don't()
+        // 4) iter over each line - count muls
+        // 5) return sum of 1) 2) 4)
 
-            if check(&report_data) {
-                count += 1;
-            } else if problem_dampener(&report_data) {
-                count += 1;
-            }
-        }
-        count
+        let (beginning, mid) = data.split_once("don't()").unwrap();
+        let (mid, end) = mid.rsplit_once("do()").unwrap();
+        let beginning_val = basic_regex(beginning);
+        let end_val = basic_regex(end);
+
+        //The new line char doesn't match against the '.' without the '(?s)' flag
+        Regex::new(r"do\(\)(?s)(.*?)don't\(\)")
+            .unwrap()
+            .captures_iter(mid)
+            .map(|c| {
+                let (_, [temp]) = c.extract();
+                temp
+            })
+            .fold(0, |acc, x| acc + basic_regex(x))
+            + beginning_val
+            + end_val
     }
 }
