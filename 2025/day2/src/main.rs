@@ -12,7 +12,9 @@ struct Args {
 
 #[derive(ValueEnum, Clone)]
 enum Mode {
+    #[value(alias = "1")]
     Test,
+    #[value(alias = "2")]
     Real,
 }
 
@@ -37,7 +39,7 @@ fn main() {
         let end: usize = end.parse().unwrap();
         acc + (end - start)
     });
-    println!("{res}");
+    println!("Number of IDs to check: {res}");
 
     let ranges = data.split(",").map(|r| r.split_once("-").unwrap());
     let mut total: usize = 0;
@@ -53,7 +55,7 @@ fn main() {
             }
         }
     }
-    println!("{total}");
+    println!("Answer: {total}");
 }
 
 fn part1(id: &str, total: &mut usize) {
