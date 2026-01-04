@@ -18,7 +18,7 @@ enum Mode {
     Real,
 }
 
-#[derive(ValueEnum, Clone)]
+#[derive(ValueEnum, Clone, PartialEq)]
 enum Part {
     #[value(name = "1")]
     One,
@@ -35,23 +35,35 @@ fn main() {
         Mode::Real => include_str!("../data/data"),
     };
 
-    let grid: Vec<Vec<char>> = data.lines().map(|line| line.chars().collect()).collect();
-    let total = match args.part {
-        Part::One => part1(&grid),
-        Part::Two => todo!(),
-    };
+    let mut grid: Vec<Vec<char>> = data.lines().map(|line| line.chars().collect()).collect();
+    let mut total = 0;
+    let removed_count = grid_scan(&mut grid, args.part);
+
+    // TODO: if part one total = removed count. if part two, then scan again if removed_count > 0
+
+    // Debugging final grid
+    for row in grid {
+        println!("{:?}", row);
+    }
 
     println!("Answer: {total}");
 }
 
-fn part1(grid: &Grid) -> usize {
+// TODO: Need to do multiple passes. If a grid point gets removed there isn't a way to check if
+// that would then remove previous grid spaces revisited. Probably just iterate over the grid until
+// it returns 0.
+fn grid_scan(grid: &mut Grid, part: Part) -> usize {
     let mut total = 0;
-    for (rv, row) in grid.iter().enumerate() {
-        for (cv, _column) in row.iter().enumerate() {
+    for rv in 0..grid.len() {
+        for cv in 0..grid[rv].len() {
             if grid[rv][cv] == '@' {
+                let mutate = part == Part::Two;
                 let neighbors = search(grid, rv, cv);
                 if neighbors < 4 {
                     total += 1;
+                    if mutate {
+                        grid[rv][cv] = 'x';
+                    }
                 }
             }
         }
@@ -59,7 +71,7 @@ fn part1(grid: &Grid) -> usize {
     total
 }
 
-fn search(grid: &Grid, row: usize, column: usize) -> usize {
+fn search(grid: &mut Grid, row: usize, column: usize) -> usize {
     let row_max = grid.len() as isize;
     let column_max = grid[0].len() as isize;
     let mut neighbors = 0;
